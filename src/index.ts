@@ -9,6 +9,10 @@ export const SCHEME = 'https://'
 export const HOST = 'api2.hiveos.farm'
 export const BASE_PATH = '/api/v2'
 
+export namespace HiveResponse {
+	export interface Farms {}
+}
+
 export class HiveError { }
 
 export class HiveFarms {
@@ -30,6 +34,8 @@ export class HiveAPI {
 		this.farms = new HiveFarms(this)
 	}
 
+	async get(endpoint: '/farms'): Promise<HiveResponse.Farms>
+	async get(endpoint: string): Promise<object>
 	async get(endpoint: string) {
 		return fetch(SCHEME + HOST + BASE_PATH + endpoint)
 			.then(response => response.json())
