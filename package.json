@@ -1,6 +1,7 @@
 {
 	"name": "cryptotech-hiveapi",
 	"version": "0.0.5",
+	"type": "module",
 	"description": "CryptotechOU HiveAPI",
 	"main": "dist/index.js",
 	"scripts": {
