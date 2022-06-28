@@ -5,33 +5,53 @@
 
 import fetch from 'node-fetch'
 
-import token from './access_token.json'
-
 export const SCHEME = 'https://'
 export const HOST = 'api2.hiveos.farm'
 export const BASE_PATH = '/api/v2'
 
-export namespace HiveInterfaces {
-	export interface HiveAuthorization {
-		access_token: string
-		token_type: string
-		expires_in: number
-	}
-
-	export interface Farms {}
-}
-
 export class HiveError { }
+
+export class HiveFarm {
+	data?: HiveInterfaces.Farm.Data
+}
 
 export class HiveFarms {
 	api: HiveAPI
+	farms: HiveFarm[]
 
 	constructor(api: HiveAPI) {
 		this.api = api
+		this.farms = []
 	}
 
-	async get() {
+	refresh(datas: HiveInterfaces.Farm.Data[]) {
+		for (const data of datas) {
+			this.init(data)
+		}
+	}
+
+	get(id: number): HiveFarm | undefined {
+		return this.farms.find(farm => farm.data?.id === id)
+	}
+
+	init(data: HiveInterfaces.Farm.Data): HiveFarm {
+		const existing = this.get(data.id)
+
+		if (existing !== undefined)
+			return existing
+
+		const farm = new HiveFarm()
+
+		farm.data = data
+
+		this.farms.push(farm)
+
+		return farm
+	}
+
+	async update() {
 		return this.api.get('/farms')
+			.then(response => this.refresh(response.data))
 	}
 }
 
@@ -44,7 +64,7 @@ export class HiveAPI {
 		this.authorization = authorization
 	}
 
-	async get(endpoint: '/farms'): Promise<HiveInterfaces.Farms>
+	async get(endpoint: '/farms'): Promise<HiveInterfaces.FarmResponse>
 	async get(endpoint: string): Promise<object>
 	async get(endpoint: string) {
 		const options = {

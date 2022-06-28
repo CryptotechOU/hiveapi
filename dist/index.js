@@ -6,13 +6,36 @@ export const HOST = 'api2.hiveos.farm';
 export const BASE_PATH = '/api/v2';
 export class HiveError {
 }
+export class HiveFarm {
+    data;
+}
 export class HiveFarms {
     api;
+    farms;
     constructor(api) {
         this.api = api;
+        this.farms = [];
     }
-    async get() {
-        return this.api.get('/farms');
+    refresh(datas) {
+        for (const data of datas) {
+            this.init(data);
+        }
+    }
+    get(id) {
+        return this.farms.find(farm => farm.data?.id === id);
+    }
+    init(data) {
+        const existing = this.get(data.id);
+        if (existing !== undefined)
+            return existing;
+        const farm = new HiveFarm();
+        farm.data = data;
+        this.farms.push(farm);
+        return farm;
+    }
+    async update() {
+        return this.api.get('/farms')
+            .then(response => this.refresh(response.data));
     }
 }
 export class HiveAPI {
