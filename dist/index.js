@@ -17,11 +17,19 @@ export class HiveFarms {
 }
 export class HiveAPI {
     farms;
-    constructor() {
+    authorization;
+    constructor(authorization) {
         this.farms = new HiveFarms(this);
+        this.authorization = authorization;
     }
     async get(endpoint) {
-        return fetch(SCHEME + HOST + BASE_PATH + endpoint)
+        const options = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + this.authorization.access_token
+            }
+        };
+        return fetch(SCHEME + HOST + BASE_PATH + endpoint, options)
             .then(response => response.json());
     }
 }

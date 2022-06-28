@@ -1,7 +1,8 @@
 {
 	"name": "cryptotech-hiveapi",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"type": "module",
+	"module": "esnext",
 	"description": "CryptotechOU HiveAPI",
 	"main": "dist/index.js",
 	"scripts": {
