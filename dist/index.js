@@ -6,36 +6,81 @@ export const HOST = 'api2.hiveos.farm';
 export const BASE_PATH = '/api/v2';
 export class HiveError {
 }
-export class HiveFarm {
+export class HiveWorker {
+    api;
+    id;
+    farm;
     data;
+    constructor(api, id, farm) {
+        this.api = api;
+        this.id = id;
+        this.farm = farm;
+    }
+    async update() {
+        return this.api.get(this.id)
+            .then(data => this.data = data);
+    }
+    get link() {
+        return `https://the.hiveos.farm/farms/${this.farm.id}/workers/${this.id}/`;
+    }
+}
+export class HiveWorkersAPI {
+    api;
+    farm;
+    constructor(api, farm) {
+        this.api = api;
+        this.farm = farm;
+    }
+    async get(endpoint = '') {
+        return this.api.get(this.farm.id + '/workers/' + endpoint);
+    }
+}
+export class HiveWorkers {
+    api;
+    farm;
+    constructor(api, farm) {
+        this.api = new HiveWorkersAPI(api, farm);
+        this.farm = farm;
+    }
+    async get(id) {
+        const worker = new HiveWorker(this.api, id, this.farm);
+        await worker.update();
+        return worker;
+    }
+}
+export class HiveFarm {
+    api;
+    id;
+    workers;
+    data;
+    constructor(api, id) {
+        this.api = api;
+        this.id = id;
+        this.workers = new HiveWorkers(this.api, this);
+    }
+    async update() {
+        return this.api.get(this.id)
+            .then(data => this.data = data);
+    }
+}
+export class HiveFarmsAPI {
+    api;
+    constructor(api) {
+        this.api = api;
+    }
+    async get(endpoint = '') {
+        return this.api.get('farms/' + endpoint);
+    }
 }
 export class HiveFarms {
     api;
-    farms;
     constructor(api) {
-        this.api = api;
-        this.farms = [];
+        this.api = new HiveFarmsAPI(api);
     }
-    refresh(datas) {
-        for (const data of datas) {
-            this.init(data);
-        }
-    }
-    get(id) {
-        return this.farms.find(farm => farm.data?.id === id);
-    }
-    init(data) {
-        const existing = this.get(data.id);
-        if (existing !== undefined)
-            return existing;
-        const farm = new HiveFarm();
-        farm.data = data;
-        this.farms.push(farm);
+    async get(id) {
+        const farm = new HiveFarm(this.api, id);
+        await farm.update();
         return farm;
-    }
-    async update() {
-        return this.api.get('/farms')
-            .then(response => this.refresh(response.data));
     }
 }
 export class HiveAPI {
@@ -45,14 +90,16 @@ export class HiveAPI {
         this.farms = new HiveFarms(this);
         this.authorization = authorization;
     }
-    async get(endpoint) {
+    async get(endpoint = '') {
+        console.log("HIVEAPI GET: ", endpoint);
         const options = {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + this.authorization.access_token
             }
         };
-        return fetch(SCHEME + HOST + BASE_PATH + endpoint, options)
+        return fetch(SCHEME + HOST + BASE_PATH + '/' + endpoint, options)
+            .catch(error => { throw new HiveError(); })
             .then(response => response.json());
     }
 }

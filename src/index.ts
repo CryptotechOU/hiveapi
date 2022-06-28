@@ -3,7 +3,7 @@
 
 'use strict'
 
-import fetch from 'node-fetch'
+import fetch, { RequestInit } from 'node-fetch'
 
 export const SCHEME = 'https://'
 export const HOST = 'api2.hiveos.farm'
@@ -11,47 +11,108 @@ export const BASE_PATH = '/api/v2'
 
 export class HiveError { }
 
-export class HiveFarm {
-	data?: HiveInterfaces.Farm.Data
-}
+export class HiveWorker {
+	api: HiveWorkersAPI
+	id: number
+	farm: HiveFarm
+	data?: HiveInterfaces.Worker.Data
 
-export class HiveFarms {
-	api: HiveAPI
-	farms: HiveFarm[]
-
-	constructor(api: HiveAPI) {
+	constructor(api: HiveWorkersAPI, id: number, farm: HiveFarm) {
 		this.api = api
-		this.farms = []
-	}
-
-	refresh(datas: HiveInterfaces.Farm.Data[]) {
-		for (const data of datas) {
-			this.init(data)
-		}
-	}
-
-	get(id: number): HiveFarm | undefined {
-		return this.farms.find(farm => farm.data?.id === id)
-	}
-
-	init(data: HiveInterfaces.Farm.Data): HiveFarm {
-		const existing = this.get(data.id)
-
-		if (existing !== undefined)
-			return existing
-
-		const farm = new HiveFarm()
-
-		farm.data = data
-
-		this.farms.push(farm)
-
-		return farm
+		this.id = id
+		this.farm = farm
 	}
 
 	async update() {
-		return this.api.get('/farms')
-			.then(response => this.refresh(response.data))
+		return this.api.get(this.id)
+			.then(data => this.data = data)
+	}
+
+	get link() {
+		return `https://the.hiveos.farm/farms/${this.farm.id}/workers/${this.id}/`
+	}
+}
+
+export class HiveWorkersAPI {
+	api: HiveFarmsAPI
+	farm: HiveFarm
+
+	constructor(api: HiveFarmsAPI, farm: HiveFarm) {
+		this.api = api
+		this.farm = farm
+	}
+
+	async get(id: number): Promise<HiveInterfaces.Worker.Data>
+	async get(endpoint: string): Promise<object>
+	async get(endpoint: string | number = ''): Promise<object> {
+		return this.api.get(this.farm.id + '/workers/' + endpoint)
+	}
+}
+
+export class HiveWorkers {
+	api: HiveWorkersAPI
+	farm: HiveFarm
+
+	constructor(api: HiveFarmsAPI, farm: HiveFarm) {
+		this.api = new HiveWorkersAPI(api, farm)
+		this.farm = farm
+	}
+
+	async get(id: number): Promise<HiveWorker> {
+		const worker = new HiveWorker(this.api, id, this.farm)
+
+		await worker.update()
+
+		return worker
+	}
+}
+
+export class HiveFarm {
+	api: HiveFarmsAPI
+	id: number
+	workers: HiveWorkers
+	data?: HiveInterfaces.Farm.Data
+
+	constructor(api: HiveFarmsAPI, id: number) {
+		this.api = api
+		this.id = id
+
+		this.workers = new HiveWorkers(this.api, this)
+	}
+
+	async update() {
+		return this.api.get(this.id)
+			.then(data => this.data = data)
+	}
+}
+
+export class HiveFarmsAPI {
+	api: HiveAPI
+
+	constructor(api: HiveAPI) {
+		this.api = api
+	}
+
+	async get(id: number): Promise<HiveInterfaces.Farm.Data>
+	async get(endpoint: string): Promise<object>
+	async get(endpoint: string | number = ''): Promise<object> {
+		return this.api.get('farms/' + endpoint)
+	}
+}
+
+export class HiveFarms {
+	api: HiveFarmsAPI
+
+	constructor(api: HiveAPI) {
+		this.api = new HiveFarmsAPI(api)
+	}
+
+	async get(id: number): Promise<HiveFarm> {
+		const farm = new HiveFarm(this.api, id)
+
+		await farm.update()
+
+		return farm
 	}
 }
 
@@ -64,18 +125,18 @@ export class HiveAPI {
 		this.authorization = authorization
 	}
 
-	async get(endpoint: '/farms'): Promise<HiveInterfaces.FarmResponse>
-	async get(endpoint: string): Promise<object>
-	async get(endpoint: string) {
-		const options = {
+	async get(endpoint: string = ''): Promise<object> {
+		console.log("HIVEAPI GET: ", endpoint)
+		const options: RequestInit = {
 			method: 'GET',
 			headers: {
 				'Authorization': 'Bearer ' + this.authorization.access_token
 			}
 		}
 
-		return fetch(SCHEME + HOST + BASE_PATH + endpoint, options)
-			.then(response => response.json())
+		return fetch(SCHEME + HOST + BASE_PATH + '/' + endpoint, options)
+			.catch(error => { throw new HiveError() })
+			.then(response => response.json() as object)
 	}
 }
 

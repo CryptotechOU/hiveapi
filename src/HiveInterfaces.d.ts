@@ -9,6 +9,177 @@ export interface HiveAuthorization {
 export type HashrateAlgo = 'ethash' | string
 export type CoinName = 'ETH' | 'ETC' | string
 
+declare module Worker {
+    export interface RemoteAddress {
+        ip: string;
+    }
+
+    export interface LanConfig {
+        dns: string;
+        dhcp: boolean;
+        address: string;
+        gateway: string;
+    }
+
+    export interface Versions {
+        hive: string;
+        kernel: string;
+        amd_driver: string;
+        nvidia_driver: string;
+    }
+
+    export interface Stats {
+        online: boolean;
+        boot_time: number;
+        stats_time: number;
+    }
+
+    export interface Motherboard {
+        manufacturer: string;
+        model: string;
+        bios: string;
+    }
+
+    export interface Cpu {
+        id: string;
+        model: string;
+        cores: number;
+        aes: boolean;
+    }
+
+    export interface Disk {
+        model: string;
+    }
+
+    export interface NetInterface {
+        mac: string;
+        iface: string;
+    }
+
+    export interface HardwareInfo {
+        motherboard: Motherboard;
+        cpu: Cpu;
+        disk: Disk;
+        net_interfaces: NetInterface[];
+    }
+
+    export interface Options {
+        shellinabox_enable: boolean;
+        ssh_enable: boolean;
+        ssh_password_enable: boolean;
+        vnc_enable: boolean;
+    }
+
+    export interface MessagesCounts {
+        success: number;
+        danger: number;
+        warning: number;
+        info: number;
+        default: number;
+        file: number;
+    }
+
+    export interface Item {
+        coin: string;
+        pool: string;
+        wal_id: number;
+        miner: string;
+    }
+
+    export interface FlightSheet {
+        id: number;
+        farm_id: number;
+        name: string;
+        items: Item[];
+    }
+
+    export interface Gpu {
+        name: string;
+        amount: number;
+    }
+
+    export interface GpuSummary {
+        gpus: Gpu[];
+        max_temp: number;
+        max_fan: number;
+    }
+
+    export interface Details {
+        subvendor: string;
+        mem: string;
+        mem_gb?: number;
+        mem_type: string;
+        mem_oem: string;
+        vbios: string;
+        oem: string;
+    }
+
+    export interface PowerLimit {
+        min: string;
+        def: string;
+        max: string;
+    }
+
+    export interface GpuInfo {
+        bus_id: string;
+        bus_number: number;
+        brand: string;
+        model: string;
+        details: Details;
+        index?: number;
+        short_name: string;
+        power_limit: PowerLimit;
+    }
+
+    export interface Message {
+        id: number;
+        type: string;
+        time: number;
+        title: string;
+        has_payload: boolean;
+    }
+
+    export interface Data {
+        id: number;
+        farm_id: number;
+        platform: number;
+        name: string;
+        active: boolean;
+        tag_ids: any[];
+        password: string;
+        mirror_url: string;
+        ip_addresses: string[];
+        remote_address: RemoteAddress;
+        vpn: boolean;
+        system_type: string;
+        needs_upgrade: boolean;
+        lan_config: LanConfig;
+        migrated: boolean;
+        versions: Versions;
+        stats: Stats;
+        hardware_info: HardwareInfo;
+        options: Options;
+        commands: any[];
+        messages_counts: MessagesCounts;
+        units_count: number;
+        red_temp: number;
+        red_fan: number;
+        red_asr: number;
+        red_la: number;
+        red_cpu_temp: number;
+        red_mem_temp: number;
+        has_amd: boolean;
+        has_nvidia: boolean;
+        flight_sheet: FlightSheet;
+        gpu_summary: GpuSummary;
+        gpu_info: GpuInfo[];
+        messages: Message[];
+    }
+
+}
+
+
+
 export namespace Farm {
 	export interface Owner {
 		id: number;
