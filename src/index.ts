@@ -126,7 +126,6 @@ export class HiveAPI {
 	}
 
 	async get(endpoint: string = ''): Promise<object> {
-		console.log("HIVEAPI GET: ", endpoint)
 		const options: RequestInit = {
 			method: 'GET',
 			headers: {
