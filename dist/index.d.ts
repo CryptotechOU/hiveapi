@@ -36,18 +36,20 @@ export declare class HiveFarm {
 export declare class HiveFarmsAPI {
     api: HiveAPI;
     constructor(api: HiveAPI);
-    get(id: number): Promise<HiveInterfaces.Farm.Data>;
+    get(endpoint: number): Promise<HiveInterfaces.Farm.Data>;
+    get(endpoint: ''): Promise<HiveInterfaces.FarmResponse>;
     get(endpoint: string): Promise<object>;
 }
 export declare class HiveFarms {
     api: HiveFarmsAPI;
     constructor(api: HiveAPI);
+    all(): Promise<HiveFarm[]>;
     get(id: number): Promise<HiveFarm>;
 }
 export declare class HiveAPI {
     farms: HiveFarms;
     authorization: HiveInterfaces.HiveAuthorization;
     constructor(authorization: HiveInterfaces.HiveAuthorization);
-    get(endpoint?: string): Promise<object>;
+    get(endpoint: string): Promise<object>;
 }
 export default HiveAPI;

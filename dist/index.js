@@ -77,6 +77,17 @@ export class HiveFarms {
     constructor(api) {
         this.api = new HiveFarmsAPI(api);
     }
+    async all() {
+        const response = await this.api.get('');
+        const { data } = response;
+        let result = [];
+        for (const item of data) {
+            const farm = new HiveFarm(this.api, item.id);
+            farm.data = item;
+            result.push(farm);
+        }
+        return result;
+    }
     async get(id) {
         const farm = new HiveFarm(this.api, id);
         await farm.update();
@@ -91,7 +102,6 @@ export class HiveAPI {
         this.authorization = authorization;
     }
     async get(endpoint = '') {
-        console.log("HIVEAPI GET: ", endpoint);
         const options = {
             method: 'GET',
             headers: {
