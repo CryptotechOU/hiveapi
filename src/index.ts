@@ -93,7 +93,8 @@ export class HiveFarmsAPI {
 		this.api = api
 	}
 
-	async get(id: number): Promise<HiveInterfaces.Farm.Data>
+	async get(endpoint: number): Promise<HiveInterfaces.Farm.Data>
+	async get(endpoint: ''): Promise<HiveInterfaces.FarmResponse>
 	async get(endpoint: string): Promise<object>
 	async get(endpoint: string | number = ''): Promise<object> {
 		return this.api.get('farms/' + endpoint)
@@ -105,6 +106,23 @@ export class HiveFarms {
 
 	constructor(api: HiveAPI) {
 		this.api = new HiveFarmsAPI(api)
+	}
+
+	async all(): Promise<HiveFarm[]> {
+		const response = await this.api.get('')
+		const { data } = response
+
+		let result = []
+
+		for (const item of data) {
+			const farm = new HiveFarm(this.api, item.id)
+
+			farm.data = item
+
+			result.push(farm)
+		}
+
+		return result
 	}
 
 	async get(id: number): Promise<HiveFarm> {
@@ -125,6 +143,7 @@ export class HiveAPI {
 		this.authorization = authorization
 	}
 
+	async get(endpoint: string): Promise<object>
 	async get(endpoint: string = ''): Promise<object> {
 		const options: RequestInit = {
 			method: 'GET',
