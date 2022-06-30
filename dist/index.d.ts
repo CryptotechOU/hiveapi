@@ -1,57 +1,42 @@
+import API from './API.js';
 export declare const SCHEME = "https://";
 export declare const HOST = "api2.hiveos.farm";
 export declare const BASE_PATH = "/api/v2";
 export declare class HiveError {
 }
 export declare class HiveWorker {
-    api: HiveWorkersAPI;
+    api: API;
     id: number;
     farm: HiveFarm;
     data?: HiveInterfaces.Worker.Data;
-    constructor(api: HiveWorkersAPI, id: number, farm: HiveFarm);
-    update(): Promise<import("./HiveInterfaces").Worker.Data>;
+    constructor(api: API, id: number, farm: HiveFarm);
+    update(): Promise<void>;
+    messages(): Promise<Data[]>;
     get link(): string;
 }
-export declare class HiveWorkersAPI {
-    api: HiveFarmsAPI;
-    farm: HiveFarm;
-    constructor(api: HiveFarmsAPI, farm: HiveFarm);
-    get(id: number): Promise<HiveInterfaces.Worker.Data>;
-    get(all: ''): Promise<HiveInterfaces.WorkersResponse>;
-    get(endpoint: string): Promise<object>;
-}
 export declare class HiveWorkers {
-    api: HiveWorkersAPI;
+    api: API;
     farm: HiveFarm;
-    constructor(api: HiveFarmsAPI, farm: HiveFarm);
+    constructor(api: API, farm: HiveFarm);
     all(): Promise<HiveWorker[]>;
     get(id: number): Promise<HiveWorker>;
 }
 export declare class HiveFarm {
-    api: HiveFarmsAPI;
+    api: API;
     id: number;
     workers: HiveWorkers;
     data?: HiveInterfaces.Farm.Data;
-    constructor(api: HiveFarmsAPI, id: number);
-    update(): Promise<import("./HiveInterfaces").Farm.Data>;
-}
-export declare class HiveFarmsAPI {
-    api: HiveAPI;
-    constructor(api: HiveAPI);
-    get(endpoint: number): Promise<HiveInterfaces.Farm.Data>;
-    get(endpoint: ''): Promise<HiveInterfaces.FarmsResponse>;
-    get(endpoint: string): Promise<object>;
+    constructor(api: API, id: number);
+    update(): Promise<void>;
 }
 export declare class HiveFarms {
-    api: HiveFarmsAPI;
-    constructor(api: HiveAPI);
+    api: API;
+    constructor(api: API);
     all(): Promise<HiveFarm[]>;
     get(id: number): Promise<HiveFarm>;
 }
-export declare class HiveAPI {
+export declare class HiveAPI extends API {
     farms: HiveFarms;
-    authorization: HiveInterfaces.HiveAuthorization;
     constructor(authorization: HiveInterfaces.HiveAuthorization);
-    get(endpoint: string): Promise<object>;
 }
 export default HiveAPI;

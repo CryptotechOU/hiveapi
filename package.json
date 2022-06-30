@@ -20,12 +20,13 @@
 	},
 	"homepage": "https://github.com/CryptotechOU/hiveapi#readme",
 	"dependencies": {
-		"node-fetch": "^3.2.6"
+		"node-fetch": "^3.2.6",
+		"ts-deepmerge": "^2.0.1"
 	},
 	"devDependencies": {
-		"eslint": "^8.18.0",
-		"typescript": "^4.7.4",
 		"@typescript-eslint/eslint-plugin": "^5.30.0",
-		"@typescript-eslint/parser": "^5.30.0"
+		"@typescript-eslint/parser": "^5.30.0",
+		"eslint": "^8.18.0",
+		"typescript": "^4.7.4"
 	}
 }

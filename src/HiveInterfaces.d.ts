@@ -9,6 +9,36 @@ export interface HiveAuthorization {
 export type HashrateAlgo = 'ethash' | string
 export type CoinName = 'ETH' | 'ETC' | string
 
+export namespace Message {
+    export interface Worker {
+        id: number;
+        farm_id: number;
+        name: string;
+    }
+
+    export interface Data {
+        id: number;
+        type: string;
+        time: number;
+        title: string;
+        has_payload: boolean;
+        worker: Worker;
+    }
+
+    export interface Pagination {
+        total: number;
+        count: number;
+        per_page: number;
+        current_page: number;
+        total_pages: number;
+    }
+}
+
+export interface Messages {
+	data: Data[];
+	pagination: Pagination;
+}
+
 export namespace Worker {
     export interface RemoteAddress {
         ip: string;

@@ -3,7 +3,8 @@
 
 'use strict'
 
-import fetch, { RequestInit } from 'node-fetch'
+
+import API from './API.js'
 
 export const SCHEME = 'https://'
 export const HOST = 'api2.hiveos.farm'
@@ -12,19 +13,24 @@ export const BASE_PATH = '/api/v2'
 export class HiveError { }
 
 export class HiveWorker {
-	api: HiveWorkersAPI
+	api: API
 	id: number
 	farm: HiveFarm
 	data?: HiveInterfaces.Worker.Data
 
-	constructor(api: HiveWorkersAPI, id: number, farm: HiveFarm) {
+	constructor(api: API, id: number, farm: HiveFarm) {
 		this.api = api
 		this.id = id
 		this.farm = farm
 	}
 
 	async update() {
-		this.data = await this.api.get(this.id)
+		this.data = await this.api.get()
+	}
+
+	async messages() {
+		return this.api.get('messages')
+			.then((messages: HiveInterfaces.Messages) => messages.data)
 	}
 
 	get link() {
@@ -32,29 +38,12 @@ export class HiveWorker {
 	}
 }
 
-export class HiveWorkersAPI {
-	api: HiveFarmsAPI
-	farm: HiveFarm
-
-	constructor(api: HiveFarmsAPI, farm: HiveFarm) {
-		this.api = api
-		this.farm = farm
-	}
-
-	async get(id: number): Promise<HiveInterfaces.Worker.Data>
-	async get(all: ''): Promise<HiveInterfaces.WorkersResponse>
-	async get(endpoint: string): Promise<object>
-	async get(endpoint: string | number = ''): Promise<object> {
-		return this.api.get(this.farm.id + '/workers/' + endpoint)
-	}
-}
-
 export class HiveWorkers {
-	api: HiveWorkersAPI
+	api: API
 	farm: HiveFarm
 
-	constructor(api: HiveFarmsAPI, farm: HiveFarm) {
-		this.api = new HiveWorkersAPI(api, farm)
+	constructor(api: API, farm: HiveFarm) {
+		this.api = api
 		this.farm = farm
 	}
 
@@ -76,7 +65,7 @@ export class HiveWorkers {
 	}
 
 	async get(id: number): Promise<HiveWorker> {
-		const worker = new HiveWorker(this.api, id, this.farm)
+		const worker = new HiveWorker(this.api.prefix(id), id, this.farm)
 
 		await worker.update()
 
@@ -85,16 +74,16 @@ export class HiveWorkers {
 }
 
 export class HiveFarm {
-	api: HiveFarmsAPI
+	api: API
 	id: number
 	workers: HiveWorkers
 	data?: HiveInterfaces.Farm.Data
 
-	constructor(api: HiveFarmsAPI, id: number) {
+	constructor(api: API, id: number) {
 		this.api = api
 		this.id = id
 
-		this.workers = new HiveWorkers(this.api, this)
+		this.workers = new HiveWorkers(this.api.prefix('workers'), this)
 	}
 
 	async update() {
@@ -102,26 +91,11 @@ export class HiveFarm {
 	}
 }
 
-export class HiveFarmsAPI {
-	api: HiveAPI
-
-	constructor(api: HiveAPI) {
-		this.api = api
-	}
-
-	async get(endpoint: number): Promise<HiveInterfaces.Farm.Data>
-	async get(endpoint: ''): Promise<HiveInterfaces.FarmsResponse>
-	async get(endpoint: string): Promise<object>
-	async get(endpoint: string | number = ''): Promise<object> {
-		return this.api.get('farms/' + endpoint)
-	}
-}
-
 export class HiveFarms {
-	api: HiveFarmsAPI
+	api: API
 
-	constructor(api: HiveAPI) {
-		this.api = new HiveFarmsAPI(api)
+	constructor(api: API) {
+		this.api = api
 	}
 
 	async all(): Promise<HiveFarm[]> {
@@ -131,7 +105,7 @@ export class HiveFarms {
 		let result = []
 
 		for (const item of data) {
-			const farm = new HiveFarm(this.api, item.id)
+			const farm = new HiveFarm(this.api.prefix(item.id), item.id)
 
 			farm.data = item
 
@@ -150,27 +124,20 @@ export class HiveFarms {
 	}
 }
 
-export class HiveAPI {
+export class HiveAPI extends API {
 	farms: HiveFarms
-	authorization: HiveInterfaces.HiveAuthorization
 
 	constructor(authorization: HiveInterfaces.HiveAuthorization) {
-		this.farms = new HiveFarms(this)
-		this.authorization = authorization
-	}
-
-	async get(endpoint: string): Promise<object>
-	async get(endpoint: string = ''): Promise<object> {
-		const options: RequestInit = {
+		const options = {
 			method: 'GET',
 			headers: {
-				'Authorization': 'Bearer ' + this.authorization.access_token
+				'Authorization': 'Bearer ' + authorization.access_token
 			}
 		}
 
-		return fetch(SCHEME + HOST + BASE_PATH + '/' + endpoint, options)
-			.catch(error => { throw new HiveError() })
-			.then(response => response.json() as object)
+		super(undefined, SCHEME + HOST + BASE_PATH, options)
+		
+		this.farms = new HiveFarms(this.prefix('farms'))
 	}
 }
 
