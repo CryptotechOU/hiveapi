@@ -24,8 +24,7 @@ export class HiveWorker {
 	}
 
 	async update() {
-		return this.api.get(this.id)
-			.then(data => this.data = data)
+		this.data = await this.api.get(this.id)
 	}
 
 	get link() {
@@ -99,8 +98,7 @@ export class HiveFarm {
 	}
 
 	async update() {
-		return this.api.get(this.id)
-			.then(data => this.data = data)
+		this.data = await this.api.get(this.id)
 	}
 }
 
