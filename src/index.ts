@@ -43,6 +43,7 @@ export class HiveWorkersAPI {
 	}
 
 	async get(id: number): Promise<HiveInterfaces.Worker.Data>
+	async get(all: ''): Promise<HiveInterfaces.WorkersResponse>
 	async get(endpoint: string): Promise<object>
 	async get(endpoint: string | number = ''): Promise<object> {
 		return this.api.get(this.farm.id + '/workers/' + endpoint)
@@ -56,6 +57,23 @@ export class HiveWorkers {
 	constructor(api: HiveFarmsAPI, farm: HiveFarm) {
 		this.api = new HiveWorkersAPI(api, farm)
 		this.farm = farm
+	}
+
+	async all(): Promise<HiveWorker[]> {
+		const response = await this.api.get('')
+		const { data } = response
+
+		let result = []
+
+		for (const item of data) {
+			const worker = new HiveWorker(this.api, item.id, this.farm)
+
+			worker.data = item
+
+			result.push(worker)
+		}
+
+		return result
 	}
 
 	async get(id: number): Promise<HiveWorker> {
@@ -94,7 +112,7 @@ export class HiveFarmsAPI {
 	}
 
 	async get(endpoint: number): Promise<HiveInterfaces.Farm.Data>
-	async get(endpoint: ''): Promise<HiveInterfaces.FarmResponse>
+	async get(endpoint: ''): Promise<HiveInterfaces.FarmsResponse>
 	async get(endpoint: string): Promise<object>
 	async get(endpoint: string | number = ''): Promise<object> {
 		return this.api.get('farms/' + endpoint)

@@ -9,7 +9,7 @@ export interface HiveAuthorization {
 export type HashrateAlgo = 'ethash' | string
 export type CoinName = 'ETH' | 'ETC' | string
 
-declare module Worker {
+export namespace Worker {
     export interface RemoteAddress {
         ip: string;
     }
@@ -149,7 +149,7 @@ declare module Worker {
         password: string;
         mirror_url: string;
         ip_addresses: string[];
-        remote_address: RemoteAddress;
+        remote_address?: RemoteAddress;
         vpn: boolean;
         system_type: string;
         needs_upgrade: boolean;
@@ -178,7 +178,10 @@ declare module Worker {
 
 }
 
-
+export interface WorkersResponse {
+	data: Worker.Data[];
+	tags: Worker.Tag[];
+}
 
 export namespace Farm {
 	export interface Owner {
@@ -326,7 +329,7 @@ export namespace Farm {
 	}
 }
 
-export interface FarmResponse {
+export interface FarmsResponse {
 	data: Farm.Data[];
 	tags: Farm.Tag[];
 }

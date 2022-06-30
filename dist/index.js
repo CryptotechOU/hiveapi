@@ -42,6 +42,17 @@ export class HiveWorkers {
         this.api = new HiveWorkersAPI(api, farm);
         this.farm = farm;
     }
+    async all() {
+        const response = await this.api.get('');
+        const { data } = response;
+        let result = [];
+        for (const item of data) {
+            const worker = new HiveWorker(this.api, item.id, this.farm);
+            worker.data = item;
+            result.push(worker);
+        }
+        return result;
+    }
     async get(id) {
         const worker = new HiveWorker(this.api, id, this.farm);
         await worker.update();

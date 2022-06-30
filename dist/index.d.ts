@@ -17,12 +17,14 @@ export declare class HiveWorkersAPI {
     farm: HiveFarm;
     constructor(api: HiveFarmsAPI, farm: HiveFarm);
     get(id: number): Promise<HiveInterfaces.Worker.Data>;
+    get(all: ''): Promise<HiveInterfaces.WorkersResponse>;
     get(endpoint: string): Promise<object>;
 }
 export declare class HiveWorkers {
     api: HiveWorkersAPI;
     farm: HiveFarm;
     constructor(api: HiveFarmsAPI, farm: HiveFarm);
+    all(): Promise<HiveWorker[]>;
     get(id: number): Promise<HiveWorker>;
 }
 export declare class HiveFarm {
@@ -37,7 +39,7 @@ export declare class HiveFarmsAPI {
     api: HiveAPI;
     constructor(api: HiveAPI);
     get(endpoint: number): Promise<HiveInterfaces.Farm.Data>;
-    get(endpoint: ''): Promise<HiveInterfaces.FarmResponse>;
+    get(endpoint: ''): Promise<HiveInterfaces.FarmsResponse>;
     get(endpoint: string): Promise<object>;
 }
 export declare class HiveFarms {
