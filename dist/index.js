@@ -4,6 +4,25 @@ import API from './API.js';
 export const SCHEME = 'https://';
 export const HOST = 'api2.hiveos.farm';
 export const BASE_PATH = '/api/v2';
+function formatDowntime(ms) {
+    ms = Date.now() - ms;
+    let seconds = Math.floor(ms / 1000);
+    let minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    let hours = Math.floor(minutes / 60);
+    minutes = minutes % 60;
+    let days = Math.floor(hours / 24);
+    hours = hours % 24;
+    if (days > 0)
+        return days + ' days';
+    if (hours > 0)
+        return hours + ' hours';
+    if (minutes > 0)
+        return minutes + ' minutes';
+    if (seconds > 0)
+        return seconds + ' seconds';
+    return 'now';
+}
 export class HiveError {
 }
 export class HiveWorker {
@@ -22,6 +41,11 @@ export class HiveWorker {
     async messages() {
         return this.api.get('messages')
             .then((messages) => messages.data);
+    }
+    get downtime() {
+        if (this.data?.stats.stats_time === undefined)
+            return 'unkown';
+        return formatDowntime(this.data.stats.stats_time * 1000);
     }
     get link() {
         return `https://the.hiveos.farm/farms/${this.farm.id}/workers/${this.id}/`;

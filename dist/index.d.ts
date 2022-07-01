@@ -12,6 +12,7 @@ export declare class HiveWorker {
     constructor(api: API, id: number, farm: HiveFarm);
     update(): Promise<void>;
     messages(): Promise<Data[]>;
+    get downtime(): string;
     get link(): string;
 }
 export declare class HiveWorkers {
