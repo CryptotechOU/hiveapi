@@ -23,17 +23,18 @@ function formatDowntime(ms: number) {
 	let days = Math.floor(hours / 24)
 	hours = hours % 24
 
-	if (days > 0)
-		return days + ' days'
+	if (hours > 0) {
+		if (days > 0)
+			return days + ' d ' + hours + ' h'
 
-	if (hours > 0)
-		return hours + ' hours'
+		else return hours + ' h'
+	}
 
 	if (minutes > 0)
-		return minutes + ' minutes'
+		return minutes + ' m'
 
 	if (seconds > 0)
-		return seconds + ' seconds'
+		return seconds + ' s'
 
 	return 'now'
 }
