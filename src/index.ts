@@ -73,6 +73,10 @@ export class HiveWorker {
 	get link(): string {
 		return `https://the.hiveos.farm/farms/${this.farm.id}/workers/${this.id}/`
 	}
+
+	get name(): string {
+		return this.data?.name || ''
+	}
 }
 
 export class HiveWorkers {
@@ -125,6 +129,14 @@ export class HiveFarm {
 
 	async update() {
 		this.data = await this.api.get(this.id)
+	}
+
+	get link(): string {
+		return `https://the.hiveos.farm/farms/${this.id}/`
+	}
+
+	get name(): string {
+		return this.data?.name || ''
 	}
 }
 
