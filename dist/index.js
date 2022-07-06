@@ -13,14 +13,16 @@ function formatDowntime(ms) {
     minutes = minutes % 60;
     let days = Math.floor(hours / 24);
     hours = hours % 24;
-    if (days > 0)
-        return days + ' days';
-    if (hours > 0)
-        return hours + ' hours';
+    if (hours > 0) {
+        if (days > 0)
+            return days + ' d ' + hours + ' h';
+        else
+            return hours + ' h';
+    }
     if (minutes > 0)
-        return minutes + ' minutes';
+        return minutes + ' m';
     if (seconds > 0)
-        return seconds + ' seconds';
+        return seconds + ' s';
     return 'now';
 }
 export class HiveError {
@@ -49,6 +51,9 @@ export class HiveWorker {
     }
     get link() {
         return `https://the.hiveos.farm/farms/${this.farm.id}/workers/${this.id}/`;
+    }
+    get name() {
+        return this.data?.name || '';
     }
 }
 export class HiveWorkers {
@@ -87,6 +92,12 @@ export class HiveFarm {
     }
     async update() {
         this.data = await this.api.get(this.id);
+    }
+    get link() {
+        return `https://the.hiveos.farm/farms/${this.id}/`;
+    }
+    get name() {
+        return this.data?.name || '';
     }
 }
 export class HiveFarms {

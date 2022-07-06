@@ -14,6 +14,7 @@ export declare class HiveWorker {
     messages(): Promise<Data[]>;
     get downtime(): string;
     get link(): string;
+    get name(): string;
 }
 export declare class HiveWorkers {
     api: API;
@@ -29,6 +30,8 @@ export declare class HiveFarm {
     data?: HiveInterfaces.Farm.Data;
     constructor(api: API, id: number);
     update(): Promise<void>;
+    get link(): string;
+    get name(): string;
 }
 export declare class HiveFarms {
     api: API;
