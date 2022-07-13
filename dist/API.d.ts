@@ -12,4 +12,5 @@ export default class API {
     prefix(path: string | number, options: RequestInit): API;
     get(path: string): Promise<any>;
     get(path?: string | number, options?: RequestInit): Promise<any>;
+    post(path?: string | number, options?: RequestInit): Promise<any>;
 }

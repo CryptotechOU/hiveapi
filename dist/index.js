@@ -44,6 +44,18 @@ export class HiveWorker {
         return this.api.get('messages')
             .then((messages) => messages.data);
     }
+    async command(bash) {
+        const request = {
+            command: 'exec',
+            data: {
+                cmd: bash
+            }
+        };
+        return this.api.post('command', {
+            body: JSON.stringify(request),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(result => result.errors === undefined);
+    }
     get downtime() {
         if (this.data?.stats.stats_time === undefined)
             return 'unkown';
@@ -68,7 +80,7 @@ export class HiveWorkers {
         const { data } = response;
         let result = [];
         for (const item of data) {
-            const worker = new HiveWorker(this.api, item.id, this.farm);
+            const worker = new HiveWorker(this.api.prefix(item.id), item.id, this.farm);
             worker.data = item;
             result.push(worker);
         }
