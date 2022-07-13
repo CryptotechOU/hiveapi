@@ -29,7 +29,7 @@ export default class API {
 
 	serializeOptions(options?: RequestInit): RequestInit | undefined {
 		if (this.options !== undefined && options !== undefined)
-		//@ts-ignore
+			//@ts-ignore
 			return deepmerge.default(this.options, options)
 
 		if (this.options !== undefined)
@@ -83,6 +83,42 @@ export default class API {
 
 		if (path == undefined)
 			throw new Error()
+
+		// Otherwise execute on its own
+		return fetch(path, options)
+			.catch(error => { throw new Error() })
+			.then(response => response.json())
+	}
+
+	async post(path?: string | number, options?: RequestInit): Promise<any> {
+		if (typeof path === 'number')
+			path = path.toString()
+
+		if (path === undefined)
+			path = this.path
+
+		else
+			path = this.serializePath(path)
+
+		options = this.serializeOptions(options)
+
+
+		if (options === undefined)
+			options = {}
+
+		options.method = 'POST'
+
+		// Pass to parent if defined
+		if (this.parent !== undefined)
+			return this.parent.post(path, options)
+
+
+
+		if (options === undefined)
+			throw new Error(`Options is undefined`)
+
+		if (path == undefined)
+			throw new Error('path is undefined')
 
 		// Otherwise execute on its own
 		return fetch(path, options)
