@@ -63,6 +63,20 @@ export class HiveWorker {
 			.then((messages: HiveInterfaces.Messages) => messages.data)
 	}
 
+	async command(bash: string) {
+		const request = {
+			command: 'exec',
+			data: {
+				cmd: bash
+			}
+		}
+
+		return this.api.post('command', {
+			body: JSON.stringify(request),
+			headers: { 'Content-Type': 'application/json' }
+		}).then(result => result.errors === undefined)
+	}
+
 	get downtime(): string {
 		if (this.data?.stats.stats_time === undefined)
 			return 'unkown'
