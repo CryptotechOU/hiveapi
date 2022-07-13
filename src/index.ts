@@ -109,7 +109,7 @@ export class HiveWorkers {
 		let result = []
 
 		for (const item of data) {
-			const worker = new HiveWorker(this.api, item.id, this.farm)
+			const worker = new HiveWorker(this.api.prefix(item.id), item.id, this.farm)
 
 			worker.data = item
 
