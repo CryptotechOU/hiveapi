@@ -1,6 +1,6 @@
 {
 	"name": "cryptotech-hiveapi",
-	"version": "0.0.19",
+	"version": "0.0.20",
 	"type": "module",
 	"module": "esnext",
 	"description": "CryptotechOU HiveAPI",

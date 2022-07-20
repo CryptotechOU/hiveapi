@@ -129,7 +129,7 @@ export class HiveFarms {
         return result;
     }
     async get(id) {
-        const farm = new HiveFarm(this.api, id);
+        const farm = new HiveFarm(this.api.prefix(id), id);
         await farm.update();
         return farm;
     }

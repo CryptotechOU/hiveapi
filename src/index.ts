@@ -179,7 +179,7 @@ export class HiveFarms {
 	}
 
 	async get(id: number): Promise<HiveFarm> {
-		const farm = new HiveFarm(this.api, id)
+		const farm = new HiveFarm(this.api.prefix(id), id)
 
 		await farm.update()
 
