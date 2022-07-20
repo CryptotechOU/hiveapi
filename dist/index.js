@@ -147,8 +147,8 @@ export class HiveAPI extends API {
         if (proxy !== undefined) {
             if (options.headers === undefined)
                 options.headers = {};
-            options.headers['Target-Endpoint'] = target;
-            super(undefined, target, options);
+            options.headers['Target-URL'] = target;
+            super(undefined, proxy, options);
         }
         else {
             super(undefined, target, options);

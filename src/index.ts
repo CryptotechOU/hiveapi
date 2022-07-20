@@ -204,9 +204,9 @@ export class HiveAPI extends API {
 			if (options.headers === undefined)
 				options.headers = {}
 
-			options.headers['Target-Endpoint'] = target
+			options.headers['Target-URL'] = target
 
-			super(undefined, target, options)
+			super(undefined, proxy, options)
 		} else {
 			super(undefined, target, options)
 		}
