@@ -1,4 +1,8 @@
-import { RequestInit } from 'node-fetch';
+interface RequestInit {
+    method?: string | 'GET' | 'POST';
+    body?: string;
+    headers?: object;
+}
 export default class API {
     parent?: API;
     path?: string;
@@ -14,3 +18,4 @@ export default class API {
     get(path?: string | number, options?: RequestInit): Promise<any>;
     post(path?: string | number, options?: RequestInit): Promise<any>;
 }
+export {};

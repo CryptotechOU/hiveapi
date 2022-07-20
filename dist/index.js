@@ -120,6 +120,7 @@ export class HiveFarms {
     async all() {
         const response = await this.api.get('');
         const { data } = response;
+        console.log(data);
         let result = [];
         for (const item of data) {
             const farm = new HiveFarm(this.api.prefix(item.id), item.id);

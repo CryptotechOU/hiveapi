@@ -4,7 +4,13 @@
 'use strict'
 
 import deepmerge from "ts-deepmerge"
-import fetch, { RequestInit } from 'node-fetch'
+import fetch from 'node-fetch'
+
+interface RequestInit {
+	method?: string | 'GET' | 'POST'
+	body?: string
+	headers?: object
+}
 
 export default class API {
 	parent?: API
@@ -86,8 +92,8 @@ export default class API {
 
 		// Otherwise execute on its own
 		return fetch(path, options)
-			.catch(error => { throw new Error() })
-			.then(response => response.json())
+			.catch((error: Error) => { throw new Error() })
+			.then((response: any) => response.json())
 	}
 
 	async post(path?: string | number, options?: RequestInit): Promise<any> {
@@ -122,8 +128,8 @@ export default class API {
 
 		// Otherwise execute on its own
 		return fetch(path, options)
-			.catch(error => { throw new Error() })
-			.then(response => response.json())
+			.catch((error: Error) => { throw new Error() })
+			.then((response: any) => response.json())
 	}
 }
 

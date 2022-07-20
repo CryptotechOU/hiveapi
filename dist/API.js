@@ -58,8 +58,8 @@ export default class API {
             throw new Error();
         // Otherwise execute on its own
         return fetch(path, options)
-            .catch(error => { throw new Error(); })
-            .then(response => response.json());
+            .catch((error) => { throw new Error(); })
+            .then((response) => response.json());
     }
     async post(path, options) {
         if (typeof path === 'number')
@@ -81,8 +81,8 @@ export default class API {
             throw new Error('path is undefined');
         // Otherwise execute on its own
         return fetch(path, options)
-            .catch(error => { throw new Error(); })
-            .then(response => response.json());
+            .catch((error) => { throw new Error(); })
+            .then((response) => response.json());
     }
 }
 //# sourceMappingURL=API.js.map

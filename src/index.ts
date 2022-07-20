@@ -165,6 +165,8 @@ export class HiveFarms {
 		const response = await this.api.get('')
 		const { data } = response
 
+		console.log(data)
+
 		let result = []
 
 		for (const item of data) {
