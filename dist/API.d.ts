@@ -1,3 +1,6 @@
+export declare class APIError extends Error {
+    constructor(parent?: Error | string);
+}
 export interface RequestHeaders {
     [key: string]: string;
 }

@@ -2,6 +2,16 @@
 'use strict';
 import deepmerge from "ts-deepmerge";
 import fetch from 'node-fetch';
+export class APIError extends Error {
+    constructor(parent) {
+        const description = typeof parent === 'string' ?
+            parent :
+            parent instanceof Error ?
+                parent.message :
+                'no description';
+        super('APIError:' + description);
+    }
+}
 export default class API {
     parent;
     path;
@@ -55,10 +65,10 @@ export default class API {
         if (this.parent !== undefined)
             return this.parent.get(path, options);
         if (path == undefined)
-            throw new Error();
+            throw new APIError('path is undefined');
         // Otherwise execute on its own
         return fetch(path, options)
-            .catch((error) => { throw new Error(); })
+            .catch((error) => { throw new APIError(error); })
             .then((response) => response.json());
     }
     async post(path, options) {
@@ -76,12 +86,12 @@ export default class API {
         if (this.parent !== undefined)
             return this.parent.post(path, options);
         if (options === undefined)
-            throw new Error(`Options is undefined`);
+            throw new APIError(`Options is undefined`);
         if (path == undefined)
-            throw new Error('path is undefined');
+            throw new APIError('path is undefined');
         // Otherwise execute on its own
         return fetch(path, options)
-            .catch((error) => { throw new Error(); })
+            .catch((error) => { throw new APIError(error); })
             .then((response) => response.json());
     }
 }

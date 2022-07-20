@@ -6,6 +6,18 @@
 import deepmerge from "ts-deepmerge"
 import fetch from 'node-fetch'
 
+export class APIError extends Error {
+	constructor(parent?: Error|string) {
+		const description = typeof parent === 'string' ?
+			parent :
+			parent instanceof Error ?
+			parent.message :
+			'no description'
+
+		super('APIError:' + description)
+	}
+}
+
 export interface RequestHeaders {
 	[key: string]: string
 }
@@ -92,11 +104,11 @@ export default class API {
 			return this.parent.get(path, options)
 
 		if (path == undefined)
-			throw new Error()
+			throw new APIError('path is undefined')
 
 		// Otherwise execute on its own
 		return fetch(path, options)
-			.catch((error: Error) => { throw new Error() })
+			.catch((error: Error) => { throw new APIError(error) })
 			.then((response: any) => response.json())
 	}
 
@@ -125,14 +137,14 @@ export default class API {
 
 
 		if (options === undefined)
-			throw new Error(`Options is undefined`)
+			throw new APIError(`Options is undefined`)
 
 		if (path == undefined)
-			throw new Error('path is undefined')
+			throw new APIError('path is undefined')
 
 		// Otherwise execute on its own
 		return fetch(path, options)
-			.catch((error: Error) => { throw new Error() })
+			.catch((error: Error) => { throw new APIError(error) })
 			.then((response: any) => response.json())
 	}
 }
