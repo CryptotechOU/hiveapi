@@ -42,6 +42,6 @@ export declare class HiveFarms {
 }
 export declare class HiveAPI extends API {
     farms: HiveFarms;
-    constructor(authorization: HiveInterfaces.HiveAuthorization);
+    constructor(authorization: HiveInterfaces.HiveAuthorization, proxy?: string);
 }
 export default HiveAPI;

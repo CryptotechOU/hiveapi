@@ -1,7 +1,10 @@
-interface RequestInit {
+export interface RequestHeaders {
+    [key: string]: string;
+}
+export interface RequestInit {
     method?: string | 'GET' | 'POST';
     body?: string;
-    headers?: object;
+    headers?: RequestHeaders;
 }
 export default class API {
     parent?: API;
@@ -18,4 +21,3 @@ export default class API {
     get(path?: string | number, options?: RequestInit): Promise<any>;
     post(path?: string | number, options?: RequestInit): Promise<any>;
 }
-export {};

@@ -120,7 +120,6 @@ export class HiveFarms {
     async all() {
         const response = await this.api.get('');
         const { data } = response;
-        console.log(data);
         let result = [];
         for (const item of data) {
             const farm = new HiveFarm(this.api.prefix(item.id), item.id);
@@ -137,14 +136,23 @@ export class HiveFarms {
 }
 export class HiveAPI extends API {
     farms;
-    constructor(authorization) {
+    constructor(authorization, proxy) {
         const options = {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + authorization.access_token
             }
         };
-        super(undefined, SCHEME + HOST + BASE_PATH, options);
+        const target = SCHEME + HOST + BASE_PATH;
+        if (proxy !== undefined) {
+            if (options.headers === undefined)
+                options.headers = {};
+            options.headers['Target-Endpoint'] = target;
+            super(undefined, target, options);
+        }
+        else {
+            super(undefined, target, options);
+        }
         this.farms = new HiveFarms(this.prefix('farms'));
     }
 }

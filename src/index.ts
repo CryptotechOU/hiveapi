@@ -4,7 +4,7 @@
 'use strict'
 
 
-import API from './API.js'
+import API, { RequestInit } from './API.js'
 
 export const SCHEME = 'https://'
 export const HOST = 'api2.hiveos.farm'
@@ -165,8 +165,6 @@ export class HiveFarms {
 		const response = await this.api.get('')
 		const { data } = response
 
-		console.log(data)
-
 		let result = []
 
 		for (const item of data) {
@@ -192,16 +190,27 @@ export class HiveFarms {
 export class HiveAPI extends API {
 	farms: HiveFarms
 
-	constructor(authorization: HiveInterfaces.HiveAuthorization) {
-		const options = {
+	constructor(authorization: HiveInterfaces.HiveAuthorization, proxy?: string) {
+		const options: RequestInit = {
 			method: 'GET',
 			headers: {
 				'Authorization': 'Bearer ' + authorization.access_token
 			}
 		}
 
-		super(undefined, SCHEME + HOST + BASE_PATH, options)
-		
+		const target = SCHEME + HOST + BASE_PATH
+
+		if (proxy !== undefined) {
+			if (options.headers === undefined)
+				options.headers = {}
+
+			options.headers['Target-Endpoint'] = target
+
+			super(undefined, target, options)
+		} else {
+			super(undefined, target, options)
+		}
+
 		this.farms = new HiveFarms(this.prefix('farms'))
 	}
 }

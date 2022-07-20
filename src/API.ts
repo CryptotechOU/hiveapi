@@ -6,10 +6,14 @@
 import deepmerge from "ts-deepmerge"
 import fetch from 'node-fetch'
 
-interface RequestInit {
+export interface RequestHeaders {
+	[key: string]: string
+}
+
+export interface RequestInit {
 	method?: string | 'GET' | 'POST'
 	body?: string
-	headers?: object
+	headers?: RequestHeaders
 }
 
 export default class API {

@@ -25,3 +25,19 @@ async function main() {
 	console.log(worker.data)
 }
 ```
+
+### FAQ
+#### How to get access token
+https://app.swaggerhub.com/apis/HiveOS/public/2.1-beta#/auth/post_auth_login
+```bash
+curl -X 'POST' \
+  'https://api2.hiveos.farm/api/v2/auth/login' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "login": "string",
+  "password": "string",
+  "twofa_code": "234345",
+  "remember": true
+}'
+```
