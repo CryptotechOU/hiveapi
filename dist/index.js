@@ -161,9 +161,8 @@ export class HiveAPI extends API {
     }
     async authenticate() {
         const twofa_code = authenticator.generate(this.authorization.secret);
-        const target = SCHEME + HOST + BASE_PATH;
+        const target = SCHEME + HOST + BASE_PATH + '/auth/login';
         const remote = this.proxy ? this.proxy : target;
-        const url = remote + '/auth/login';
         const body = {
             login: this.authorization.username,
             password: this.authorization.password,
@@ -176,7 +175,7 @@ export class HiveAPI extends API {
         if (this.proxy !== undefined) {
             headers['Target-URL'] = target;
         }
-        const token = await fetch(url, {
+        const token = await fetch(remote, {
             method: 'post',
             body: JSON.stringify(body),
             headers
