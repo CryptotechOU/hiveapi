@@ -43,6 +43,7 @@ export declare class HiveFarms {
 export declare class HiveAPI extends API {
     farms: HiveFarms;
     authorization: HiveInterfaces.HiveAuthorization;
+    proxy?: string;
     constructor(authorization: HiveInterfaces.HiveAuthorization, proxy?: string);
     authenticate(): Promise<void>;
     get(...args: any[]): Promise<any>;

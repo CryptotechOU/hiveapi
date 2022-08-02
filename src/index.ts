@@ -192,6 +192,7 @@ export class HiveFarms {
 export class HiveAPI extends API {
 	farms: HiveFarms
 	authorization: HiveInterfaces.HiveAuthorization
+	proxy?: string
 
 	constructor(authorization: HiveInterfaces.HiveAuthorization, proxy?: string) {
 		const options: RequestInit = {
@@ -213,13 +214,18 @@ export class HiveAPI extends API {
 		}
 
 		this.authorization = authorization
+		this.proxy = proxy
 
 		this.farms = new HiveFarms(this.prefix('farms'))
 	}
 
 	async authenticate() {
 		const twofa_code = authenticator.generate(this.authorization.secret)
-		const target = SCHEME + HOST + BASE_PATH + '/auth/login'
+
+		const target = SCHEME + HOST + BASE_PATH
+		const remote = this.proxy ? this.proxy : target
+		const url = remote + '/auth/login'
+
 		const body = {
 			login: this.authorization.username,
 			password: this.authorization.password,
@@ -227,10 +233,18 @@ export class HiveAPI extends API {
 			remember: this.authorization.remember || false
 		}
 
-		const token = await fetch(target, {
+		const headers: any = {
+			'Content-Type': 'application/json'
+		}
+
+		if (this.proxy !== undefined) {
+			headers['Target-URL'] = target
+		}
+
+		const token = await fetch(url, {
 			method: 'post',
 			body: JSON.stringify(body),
-			headers: {'Content-Type': 'application/json'}
+			headers
 		}).then((response: any) => response.json())
 
 		if (this.options === undefined)
