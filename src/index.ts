@@ -222,8 +222,8 @@ export class HiveAPI extends API {
 	async authenticate() {
 		const twofa_code = authenticator.generate(this.authorization.secret)
 
-		const target = SCHEME + HOST + BASE_PATH  + '/auth/login'
-		const remote = this.proxy ? this.proxy : target
+		const target = SCHEME + HOST + BASE_PATH + '/auth/login'
+		const remote = this.proxy ? (this.proxy + '/auth/login') : target
 
 		const body = {
 			login: this.authorization.username,
