@@ -1,6 +1,8 @@
 // S.
 'use strict';
 import API from './API.js';
+import fetch from 'node-fetch';
+import { authenticator } from 'otplib';
 export const SCHEME = 'https://';
 export const HOST = 'api2.hiveos.farm';
 export const BASE_PATH = '/api/v2';
@@ -136,12 +138,11 @@ export class HiveFarms {
 }
 export class HiveAPI extends API {
     farms;
+    authorization;
     constructor(authorization, proxy) {
         const options = {
             method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + authorization.access_token
-            }
+            headers: {}
         };
         const target = SCHEME + HOST + BASE_PATH;
         if (proxy !== undefined) {
@@ -153,7 +154,43 @@ export class HiveAPI extends API {
         else {
             super(undefined, target, options);
         }
+        this.authorization = authorization;
         this.farms = new HiveFarms(this.prefix('farms'));
+    }
+    async authenticate() {
+        const twofa_code = authenticator.generate(this.authorization.secret);
+        const target = SCHEME + HOST + BASE_PATH + '/auth/login';
+        const body = {
+            login: this.authorization.username,
+            password: this.authorization.password,
+            twofa_code,
+            remember: this.authorization.remember || false
+        };
+        const token = await fetch(target, {
+            method: 'post',
+            body: JSON.stringify(body),
+            headers: { 'Content-Type': 'application/json' }
+        }).then((response) => response.json());
+        if (this.options === undefined)
+            this.options = {};
+        if (this.options.headers === undefined)
+            this.options.headers = {};
+        this.options.headers['Authorization'] = 'Bearer ' + token['access_token'];
+    }
+    async get(...args) {
+        const response = await super.get(...args);
+        if (typeof response === 'object' && response.hasOwnProperty('message') === true && response['message'] === 'Unauthorized') {
+            await this.authenticate();
+            // Repeat attempt
+            const response2 = await super.get(...args);
+            if (typeof response2 === 'object' && response2.hasOwnProperty('message') === true && response2['message'] === 'Unauthorized') {
+                throw new Error('Failed to authenticate');
+            }
+            // Authentication success
+            return response2;
+        }
+        // All good, just return the response
+        return response;
     }
 }
 export default HiveAPI;

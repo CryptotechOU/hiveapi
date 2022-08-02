@@ -1,9 +1,10 @@
 export as namespace HiveInterfaces
 
 export interface HiveAuthorization {
-	access_token: string
-	token_type: string
-	expires_in: number
+	username: string
+	password: string
+	secret: string
+	remember: boolean
 }
 
 export type HashrateAlgo = 'ethash' | string

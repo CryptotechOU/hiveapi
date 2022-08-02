@@ -1,6 +1,6 @@
 {
 	"name": "cryptotech-hiveapi",
-	"version": "0.0.20",
+	"version": "0.0.21",
 	"type": "module",
 	"module": "esnext",
 	"description": "CryptotechOU HiveAPI",
@@ -21,6 +21,7 @@
 	"homepage": "https://github.com/CryptotechOU/hiveapi#readme",
 	"dependencies": {
 		"node-fetch": "^2.6.1",
+		"otplib": "^12.0.1",
 		"ts-deepmerge": "^2.0.1"
 	},
 	"devDependencies": {
