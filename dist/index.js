@@ -105,7 +105,7 @@ export class HiveFarm {
         this.workers = new HiveWorkers(this.api.prefix('workers'), this);
     }
     async update() {
-        this.data = await this.api.get(this.id);
+        this.data = await this.api.get();
     }
     get link() {
         return `https://the.hiveos.farm/farms/${this.id}/`;

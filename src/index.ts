@@ -144,7 +144,7 @@ export class HiveFarm {
 	}
 
 	async update() {
-		this.data = await this.api.get(this.id)
+		this.data = await this.api.get()
 	}
 
 	get link(): string {
