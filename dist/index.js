@@ -143,7 +143,9 @@ export class HiveAPI extends API {
     constructor(authorization, proxy) {
         const options = {
             method: 'GET',
-            headers: {}
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            }
         };
         const target = SCHEME + HOST + BASE_PATH;
         if (proxy !== undefined) {

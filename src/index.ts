@@ -197,7 +197,9 @@ export class HiveAPI extends API {
 	constructor(authorization: HiveInterfaces.HiveAuthorization, proxy?: string) {
 		const options: RequestInit = {
 			method: 'GET',
-			headers: {}
+			headers: {
+				'Access-Control-Allow-Origin': '*'
+			}
 		}
 
 		const target = SCHEME + HOST + BASE_PATH
