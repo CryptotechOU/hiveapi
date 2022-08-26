@@ -143,20 +143,10 @@ export class HiveAPI extends API {
     constructor(authorization, proxy) {
         const options = {
             method: 'GET',
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-            }
+            headers: {}
         };
         const target = SCHEME + HOST + BASE_PATH;
-        if (proxy !== undefined) {
-            if (options.headers === undefined)
-                options.headers = {};
-            options.headers['Target-URL'] = target;
-            super(undefined, proxy, options);
-        }
-        else {
-            super(undefined, target, options);
-        }
+        super(undefined, proxy !== undefined ? proxy + target : target, options);
         this.authorization = authorization;
         this.proxy = proxy;
         this.farms = new HiveFarms(this.prefix('farms'));
@@ -164,7 +154,7 @@ export class HiveAPI extends API {
     async authenticate() {
         const twofa_code = authenticator.generate(this.authorization.secret);
         const target = SCHEME + HOST + BASE_PATH + '/auth/login';
-        const remote = this.proxy ? (this.proxy + '/auth/login') : target;
+        const remote = this.proxy ? (this.proxy + target) : target;
         const body = {
             login: this.authorization.username,
             password: this.authorization.password,
@@ -174,9 +164,6 @@ export class HiveAPI extends API {
         const headers = {
             'Content-Type': 'application/json'
         };
-        if (this.proxy !== undefined) {
-            headers['Target-URL'] = target;
-        }
         const token = await fetch(remote, {
             method: 'post',
             body: JSON.stringify(body),

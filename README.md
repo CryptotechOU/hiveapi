@@ -14,9 +14,10 @@ yarn add ssh://git@github.com:CryptotechOU/hiveapi.git
 ```js
 async function main() {
 	const api = new HiveAPI({
-		"access_token": "your-token-349-chars",
-		"token_type": "bearer",
-		"expires_in": 329229200
+		username: "loginname",
+		password: "loginpass",
+		secret: "2fasecret",
+		remember: false,
 	})
 
 	const farm = await api.farms.get(1631951)
@@ -27,17 +28,10 @@ async function main() {
 ```
 
 ### FAQ
-#### How to get access token
-https://app.swaggerhub.com/apis/HiveOS/public/2.1-beta#/auth/post_auth_login
-```bash
-curl -X 'POST' \
-  'https://api2.hiveos.farm/api/v2/auth/login' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "login": "string",
-  "password": "string",
-  "twofa_code": "234345",
-  "remember": true
-}'
-```
+
+### Progress
+
+ - [ ] Error handling: `0%`
+ - [ ] Tests: `0%`
+ - [ ] Documentation: `0%`
+ - [ ] Examples: `0%`
