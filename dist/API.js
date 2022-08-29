@@ -30,8 +30,7 @@ export default class API {
     }
     serializeOptions(options) {
         if (this.options !== undefined && options !== undefined)
-            //@ts-ignore
-            return deepmerge.default(this.options, options);
+            return deepmerge(this.options, options);
         if (this.options !== undefined)
             return this.options;
         return options;
