@@ -12,7 +12,7 @@ export declare class HiveWorker {
     constructor(api: API, id: number, farm: HiveFarm);
     update(): Promise<void>;
     messages(): Promise<Data[]>;
-    command(bash: string): Promise<boolean>;
+    command(bash: string): Promise<any>;
     get downtime(): string;
     get link(): string;
     get name(): string;

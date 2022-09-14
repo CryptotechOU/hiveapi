@@ -56,7 +56,7 @@ export class HiveWorker {
         return this.api.post('command', {
             body: JSON.stringify(request),
             headers: { 'Content-Type': 'application/json' }
-        }).then(result => result.errors === undefined);
+        });
     }
     get downtime() {
         if (this.data?.stats.stats_time === undefined)
